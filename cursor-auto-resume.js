@@ -157,15 +157,36 @@
 
   async function handleProblematicPopups() {
     const popupContainers = document.querySelectorAll(PROBLEMATIC_POPUP_CONTAINER_SELECTOR);
-    for (const container of popupContainers) {
+    // console.log(`[AutoScript DEBUG] Found ${popupContainers.length} potential problematic popup containers using selector: "${PROBLEMATIC_POPUP_CONTAINER_SELECTOR}"`);
+
+    for (let i = 0; i < popupContainers.length; i++) {
+      const container = popupContainers[i];
       const containerText = container.textContent.toLowerCase();
-      if (PROBLEMATIC_POPUP_TEXTS.some(txt => containerText.includes(txt.toLowerCase()))) {
+      // console.log(`[AutoScript DEBUG] Checking container #${i} text: "${containerText.substring(0, 150)}..."`);
+
+      let matchedProblemText = null;
+      for (const problemText of PROBLEMATIC_POPUP_TEXTS) {
+        if (containerText.includes(problemText.toLowerCase())) {
+          matchedProblemText = problemText;
+          break;
+        }
+      }
+
+      if (matchedProblemText) {
+        // console.log(`[AutoScript DEBUG] Matched problematic text "${matchedProblemText}" in container #${i}.`);
         const style = window.getComputedStyle(container);
-        if (style.display !== "none" && style.visibility !== "hidden" && style.opacity !== "0") {
-          console.log(`[AutoScript] Problematic popup detected. Sending "continue". Text: ${container.textContent.substring(0,100)}`);
+        const isVisible = style.display !== "none" &&
+                          style.visibility !== "hidden" &&
+                          style.opacity !== "0" && // Ensure not transparent
+                          container.offsetParent !== null; // Actually in layout and rendered
+
+        if (isVisible) {
+          console.log(`[AutoScript] Problematic popup DETECTED AND VISIBLE. Sending "continue". Matched text: "${matchedProblemText}". Full text snippet: "${container.textContent.substring(0,100)}"`);
           await typeAndSendMessage("continue");
           lastActionTimestamp = Date.now();
           return true; // Action taken
+        } else {
+          // console.log(`[AutoScript DEBUG] Problematic popup text matched for container #${i}, but VISIBILITY CHECK FAILED. Display: ${style.display}, Visibility: ${style.visibility}, Opacity: ${style.opacity}, OffsetParent: ${container.offsetParent === null ? "null" : "exists"}`);
         }
       }
     }
