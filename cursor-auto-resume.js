@@ -157,12 +157,12 @@
 
   async function handleProblematicPopups() {
     const popupContainers = document.querySelectorAll(PROBLEMATIC_POPUP_CONTAINER_SELECTOR);
-    // console.log(`[AutoScript DEBUG] Found ${popupContainers.length} potential problematic popup containers using selector: "${PROBLEMATIC_POPUP_CONTAINER_SELECTOR}"`);
+    console.log(`[AutoScript DEBUG] Found ${popupContainers.length} potential problematic popup containers using selector: "${PROBLEMATIC_POPUP_CONTAINER_SELECTOR}"`);
 
     for (let i = 0; i < popupContainers.length; i++) {
       const container = popupContainers[i];
       const containerText = container.textContent.toLowerCase();
-      // console.log(`[AutoScript DEBUG] Checking container #${i} text: "${containerText.substring(0, 150)}..."`);
+      console.log(`[AutoScript DEBUG] Checking container #${i} text: "${containerText.substring(0, 150)}..."`);
 
       let matchedProblemText = null;
       for (const problemText of PROBLEMATIC_POPUP_TEXTS) {
@@ -173,7 +173,7 @@
       }
 
       if (matchedProblemText) {
-        // console.log(`[AutoScript DEBUG] Matched problematic text "${matchedProblemText}" in container #${i}.`);
+        console.log(`[AutoScript DEBUG] Matched problematic text "${matchedProblemText}" in container #${i}.`);
         const style = window.getComputedStyle(container);
         const isVisible = style.display !== "none" &&
                           style.visibility !== "hidden" &&
@@ -186,7 +186,7 @@
           lastActionTimestamp = Date.now();
           return true; // Action taken
         } else {
-          // console.log(`[AutoScript DEBUG] Problematic popup text matched for container #${i}, but VISIBILITY CHECK FAILED. Display: ${style.display}, Visibility: ${style.visibility}, Opacity: ${style.opacity}, OffsetParent: ${container.offsetParent === null ? "null" : "exists"}`);
+          console.log(`[AutoScript DEBUG] Problematic popup text matched for container #${i}, but VISIBILITY CHECK FAILED. Display: ${style.display}, Visibility: ${style.visibility}, Opacity: ${style.opacity}, OffsetParent: ${container.offsetParent === null ? "null" : "exists"}`);
         }
       }
     }
